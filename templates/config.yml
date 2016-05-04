@@ -1,0 +1,25 @@
+global:
+  web:
+    environment:
+      - TEST=forall
+dev:
+  web:
+    environment:
+      - NODE_ENV=dev
+staging:
+  web:
+    environment:
+      - NODE_ENV=staging
+prod:
+  lb:
+    labels:
+      io.rancher.scheduler.local: 'false'
+  web:
+    image: seed/web
+    unknown: 'somethingElse'
+    environment:
+      - NODE_ENV=prod
+      - BLAH=prod
+      - TWO_ENV=prod
+    labels:
+      io.rancher.scheduler.local: 'false'

@@ -1,0 +1,42 @@
+db:
+  container_name: alessidb
+  image: mongo:3
+  ports:
+  - 27017:27017
+dbmigrate:
+  container_name: dbmigrate
+  environment:
+  - NODE_ENV=staging
+  image: seed/alessi-mutants:dbmigrate
+  labels:
+    io.rancher.container.start_once: true
+  links:
+  - db:alessidb
+lb:
+  image: rancher/load-balancer-service
+  labels:
+    io.rancher.scheduler.global: 'true'
+    io.rancher.scheduler.local: 'false'
+  links:
+  - web:web
+  ports:
+  - 80:3000
+  restart: always
+  stdin_open: true
+  tty: true
+web:
+  environment:
+  - NODE_ENV=prod
+  - BLAH=prod
+  - TWO_ENV=prod
+  expose:
+  - 3000
+  image: seed/web
+  labels:
+    io.rancher.scheduler.affinity:host_label: client=appname,env=staging
+    io.rancher.scheduler.local: 'false'
+  links:
+  - db:alessidb
+  unknown: somethingElse
+  volumes:
+  - /alessimedia:/usr/app/src/client/imgs

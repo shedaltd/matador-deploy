@@ -1,31 +1,36 @@
 lb:
-  scale: 1
-  load_balancer_config:
-    name: lb config
-  #   lb_cookie_stickiness_policy:
-  #     cookie: sessionID
-  #     domain: ibackpacker.com.au
-  #     mode: prefix
-  health_check:
-    port: 42
-    interval: 2000
-    unhealthy_threshold: 3
-    healthy_threshold: 2
-    response_timeout: 2000
-  default_cert: ibackpacker-wildcard-crt
-
-
+  image: rancher/load-balancer-service
+  ports:
+    - "80:3000"
+  restart: always
+  links:
+    - web:web
+  labels:
+    io.rancher.scheduler.global: 'true'
+  tty: true
+  image: rancher/load-balancer-service
+  stdin_open: true
 web:
-  scale: 2
-  health_check:
-    port: 3000
-    # Interval is measured in milliseconds
-    interval: 2000
-    unhealthy_threshold: 3
-    # For TCP, request_line needs to be ''
-    # TCP Example:
-    # request_line: ''
-    # request_line: GET / HTTP/1.0
-    healthy_threshold: 2
-    # Response timeout is measured in milliseconds
-    response_timeout: 2000
+  image: seed/alessi-mutants:staging
+  expose:
+    - 3000
+  volumes:
+    - /alessimedia:/usr/app/src/client/imgs
+  links:
+    - db:alessidb
+  labels:
+    io.rancher.scheduler.affinity:host_label: client=appname,env=staging
+db:
+  image: mongo:3
+  container_name: alessidb
+  ports:
+    - "27017:27017"
+dbmigrate:
+  image: seed/alessi-mutants:dbmigrate
+  container_name: dbmigrate
+  links:
+    - db:alessidb
+  labels:
+    io.rancher.container.start_once: true
+  environment:
+    - NODE_ENV=staging
