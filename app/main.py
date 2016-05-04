@@ -113,17 +113,17 @@ addConfigToRancherCompose(rancher_compose_file, env_config)
 # SETTING THE IMAGE FOR THE RANCHER CONFIG
 # ------------------------------------------------------------------------------
 
-def setImageForRancherConfig(rancher_config, environment, repo_name):
+def setImageForRancherConfig(rancher_config, environment, image_base):
     # if not optionExistsInService(rancher_config['web'], 'image')
     if environment == 'dev':
-        image_name = 'seed/' + repo_name + ':dev'
+        image_name = image_base + ':dev'
     elif environment == 'staging':
-        image_name = 'seed/' + repo_name + ':staging'
+        image_name = image_base + ':staging'
     elif environment == 'prod':
-        image_name = 'seed/' + repo_name + ':latest'
+        image_name = image_base + ':latest'
     rancher_config['web']['image'] = image_name
 
-setImageForRancherConfig(rancher_compose_file, ENV_ARGUMENT, config_file['repo_name'])
+setImageForRancherConfig(rancher_compose_file, ENV_ARGUMENT, config_file['image_base'])
 
 # Writing out the yaml object to a file
 with open('result.yml', 'w') as new_yaml_file:

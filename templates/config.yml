@@ -1,4 +1,4 @@
-repo_name: testing-test
+image_base: seed/testing-test
 global:
   web:
     environment:
