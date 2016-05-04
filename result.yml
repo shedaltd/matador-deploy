@@ -26,12 +26,13 @@ lb:
   tty: true
 web:
   environment:
+  - TEST=forall
   - NODE_ENV=prod
   - BLAH=prod
   - TWO_ENV=prod
   expose:
   - 3000
-  image: seed/web
+  image: seed/testing-test:latest
   labels:
     io.rancher.scheduler.affinity:host_label: client=appname,env=staging
     io.rancher.scheduler.local: 'false'

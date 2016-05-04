@@ -78,46 +78,52 @@ def optionExistsInService(service_array, option):
     else:
         return False
 
-# NOTE: There must be a better way to do this
-def createOptionInService(service_array, option, config_options):
-    option_type = type(env_config[service][option])
+def createOptionInService(service_array, service, option, option_type):
     if option_type is dict:
         default_value = {}
     if option_type is list:
         default_value = []
     if option_type is str:
         default_value = ""
-    service_array.update({option: default_value})
+    service_array[service].update({option: default_value})
 
-def addOptionToService(service, option, config_options):
+def addOptionToService(rancher_config, service, option, config_options):
     option_type = type(config_options)
     if option_type is dict:
         for key in config_options:
-            rancher_compose_file[service][option][key] = config_options[key]
+            rancher_config[service][option][key] = config_options[key]
     elif option_type is list:
         for value in config_options:
-            rancher_compose_file[service][option].append(value)
+            rancher_config[service][option].append(value)
     elif option_type is str:
-        rancher_compose_file[service][option] = config_options
+        rancher_config[service][option] = config_options
 
+def addConfigToRancherCompose(rancher_config, add_config):
+    for service in add_config:
+        if safeServiceLoad(rancher_config, service):
+            for option in add_config[service]:
+                if not optionExistsInService(rancher_config[service], option):
+                    createOptionInService(rancher_config, service, option, type(add_config[service][option]))
+                addOptionToService(rancher_config, service, option, add_config[service][option])
 
-# CONFIG FILE STRUCTURE
-# service
-    # option
-        # value
+addConfigToRancherCompose(rancher_compose_file, global_config)
+addConfigToRancherCompose(rancher_compose_file, env_config)
 
-# Loop through each of the services being altered in the env_config
-for service in env_config:
-    if safeServiceLoad(rancher_compose_file, service):
-        for option in env_config[service]: # Next, loop through each of the additional options defined in the
-            # Here we need to see if the option exists in the actual rancher config
-            if not optionExistsInService(rancher_compose_file[service], option):
-                createOptionInService(rancher_compose_file[service], option, env_config[service][option])
-            # Then add the option to the service in the rancher config
-            addOptionToService(service, option, env_config[service][option])
+# ##############################################################################
+# SETTING THE IMAGE FOR THE RANCHER CONFIG
+# ------------------------------------------------------------------------------
 
+def setImageForRancherConfig(rancher_config, environment, repo_name):
+    # if not optionExistsInService(rancher_config['web'], 'image')
+    if environment == 'dev':
+        image_name = 'seed/' + repo_name + ':dev'
+    elif environment == 'staging':
+        image_name = 'seed/' + repo_name + ':staging'
+    elif environment == 'prod':
+        image_name = 'seed/' + repo_name + ':latest'
+    rancher_config['web']['image'] = image_name
 
-print "Saving File To Disk"
+setImageForRancherConfig(rancher_compose_file, ENV_ARGUMENT, config_file['repo_name'])
 
 # Writing out the yaml object to a file
 with open('result.yml', 'w') as new_yaml_file:
