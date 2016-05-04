@@ -1,0 +1,23 @@
+web: # THIS MUST BE TURNED INTO SOME KIND OF CONFIG FILE OR SOMETHING
+  environment:
+    - DB_USER=ibackpacker
+    - DB_PASSWORD=MGYYC8fdKspF
+    - DB_NAME=ibackpacker
+    - DB_HOST=ibackpacker-staging.cbtfjzdjph6v.ap-southeast-2.rds.amazonaws.com
+    - HOST_NAME=http://staging.ibackpacker.com.au
+    - AWS_ACCESS_KEY_ID=AKIAJGO2WHXALE5FO5OQ
+    - AWS_SECRET_ACCESS_KEY=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
+    - AWS_REGION_URL=http://s3-ap-southeast-2.amazonaws.com/
+    - AWS_BUCKET_NAME=ibackpacker-images
+    - MAILGUN_API_KEY=key-39e0d8fae90882586fb242fc6738f30d
+    - MAILGUN_DOMAIN=seeddigital.co
+    - COOKIE_AGE=60
+    - CACHE_AGE=3600
+    - APP_LOGGING_DIRECTORY=/logs/app
+    - HTTP_LOGGING_DIRECTORY=/logs/http
+    - SLACK_LOGGER_URL=https://hooks.slack.com/services/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
+    - SLACK_LOGGER_DOMAIN=ibackpacker
+  privileged: true
+  restart: always
+  labels:
+    io.rancher.scheduler.affinity:host_label: client=ibackpacker,env=staging
