@@ -1,133 +1,75 @@
 #!/usr/bin/env python
+# ------------------------------------------------------------------------------
+# LICENCE INFORMATION
+# ------------------------------------------------------------------------------
+# Rancher Deployment Script - SEED DIGITAL (C) 2016
+#
+# Author: Timon C Sotiropoulos
+# Contact: timon@seeddigital.co
+# Seed Digital: http://seeddigital.co/
+# Rancher: http://rancher.com/
+#
+# This application is a script for deploying applications to the
+# Rancher platform. It takes a number of command linke arguments
+# and will then use these variables to build a rancher compose
+# file and then push the application to the rancher environment
+# defined by the API Keys it is provided.
+#
 
-# Start Up Python Script
-
-# print "Python Time Baby"
-
-# Lets get the arguments from the command line to pass in the information we need
+# ###################################
+# Core Python Modules
+# -----------------------------------
 import sys
+import imp
 
-# print "\n".join(sys.argv)
-
-# ##############################################################################
-# HELP OPTIONS AND HOW TO USE PYTHON APPLICATION
-# ------------------------------------------------------------------------------
-
-# Our Option Types Defined Here
-# --url shows the
-# if len(sys.argv) == 1:
-#     print "Rancher Deployment Script\n"
-#     print "This script will assist you in updating your rancher environment."
-#     print "All the following command line arguments are required to update rancher\n"
-#     print "Usage: --url <http://example.com> --key <key> --secret <secret_key> --env [dev|staging|prod]"
-#     print "    --url \t url to connect to your rancher server"
-#     print "    --key \t username of api key to connect to rancher host"
-#     print "    --secret \t password of api key to connect to rancher host"
-#     print "    --env \t environment you wish to update"
-#     sys.exit(0);
-# else: # This needs to be extended to start actually doing stuff with the arg variables, checking if they exist etc etc
-#     print "Starting Deployment Business"
+# ###################################
+# Custom Python Modules
+# -----------------------------------
+arguments = imp.load_source('arguments', './app/src/arguments.py')
+yml_reader = imp.load_source('yml_reader', './app/src/yml_reader.py')
+compose_builder = imp.load_source('compose_builder', './app/src/compose_builder.py')
 
 
-# Lets try to read in a YML File into Python :)
-import yaml
+# #####################################################
+# 1. Confirming Command Config and Required Arguments
+# -----------------------------------------------------
+# if arguments.noSystemArgsExist(sys.argv):
+    # arguments.printHelpDocumentationThenExit()
 
+#TODO: Add flag reading stuff in here
 
-# ##############################################################################
-# READING YAML FILES FROM FILES
-# ------------------------------------------------------------------------------
-
-# Load in out base rancher template
-with open("templates/rancher-compose.yml", 'r') as stream:
-    try:
-        rancher_compose_file = yaml.load(stream)
-    except yaml.YAMLError as exc:
-        print(exc)
-
-# Load in our configuration file
-with open("templates/config.yml", 'r') as stream:
-    try:
-        # print(yaml.load(stream))
-        config_file = yaml.load(stream)
-    except yaml.YAMLError as exc:
-        print(exc)
-
-
-# First get the global config, this needs to be added regardless
-global_config = config_file["global"]
-
-# Then get the specific environment config from the file by adding
+# Setup GLOBAL Env Vars passed in from command line
 ENV_ARGUMENT = "prod"
-env_config = config_file[ENV_ARGUMENT]
+RANCHER_SECRET_KEY = "dfasf"
+RANCHER_API_THING = "dfasf"
+RANCHER_URL = "dfasf"
 
 
-# ##############################################################################
-# COMBINING CONFIG AND RANCHER COMPOSE FILES
-# ------------------------------------------------------------------------------
+# ##################################
+# 2. Reading YAML Files Into Script
+# ----------------------------------
+rancher_compose_file = yml_reader.readComposeFile()
+config_file = yml_reader.readConfigurationFile()
+global_config = yml_reader.getGlobalConfig()
+env_config = yml_reader.getEnvConfig(ENV_ARGUMENT)
 
-def safeServiceLoad(compose_file, service):
-    if service in compose_file:
-        return True
-    else:
-        print "ERROR: Service does not exist in compose file"
-        raise Exception('Service was not found inside your rancher compose file. \nMISSING SERVICE: ' + service)
 
-def optionExistsInService(service_array, option):
-    if option in service_array:
-        return True
-    else:
-        return False
+# ##################################################
+# 3. Combine config into the rancher compose
+# --------------------------------------------------
+compose_builder.addConfigToRancherCompose(rancher_compose_file, global_config)
+compose_builder.addConfigToRancherCompose(rancher_compose_file, env_config)
 
-def createOptionInService(service_array, service, option, option_type):
-    if option_type is dict:
-        default_value = {}
-    if option_type is list:
-        default_value = []
-    if option_type is str:
-        default_value = ""
-    service_array[service].update({option: default_value})
+# ###############################################
+# 4. Set the image for the deployment
+# -----------------------------------------------
+compose_builder.setImageForRancherConfig(rancher_compose_file, ENV_ARGUMENT, config_file['image_base'])
 
-def addOptionToService(rancher_config, service, option, config_options):
-    option_type = type(config_options)
-    if option_type is dict:
-        for key in config_options:
-            rancher_config[service][option][key] = config_options[key]
-    elif option_type is list:
-        for value in config_options:
-            rancher_config[service][option].append(value)
-    elif option_type is str:
-        rancher_config[service][option] = config_options
+# ###############################################
+# 5. Save new yml out to a temp file
+# -----------------------------------------------
+yml_reader.saveRancherComposeFile(rancher_compose_file)
 
-def addConfigToRancherCompose(rancher_config, add_config):
-    for service in add_config:
-        if safeServiceLoad(rancher_config, service):
-            for option in add_config[service]:
-                if not optionExistsInService(rancher_config[service], option):
-                    createOptionInService(rancher_config, service, option, type(add_config[service][option]))
-                addOptionToService(rancher_config, service, option, add_config[service][option])
-
-addConfigToRancherCompose(rancher_compose_file, global_config)
-addConfigToRancherCompose(rancher_compose_file, env_config)
-
-# ##############################################################################
-# SETTING THE IMAGE FOR THE RANCHER CONFIG
-# ------------------------------------------------------------------------------
-
-def setImageForRancherConfig(rancher_config, environment, image_base):
-    # if not optionExistsInService(rancher_config['web'], 'image')
-    if environment == 'dev':
-        image_name = image_base + ':dev'
-    elif environment == 'staging':
-        image_name = image_base + ':staging'
-    elif environment == 'prod':
-        image_name = image_base + ':latest'
-    rancher_config['web']['image'] = image_name
-
-setImageForRancherConfig(rancher_compose_file, ENV_ARGUMENT, config_file['image_base'])
-
-# Writing out the yaml object to a file
-with open('result.yml', 'w') as new_yaml_file:
-    try:
-        new_yaml_file.write(yaml.dump(rancher_compose_file, default_flow_style=False))
-    except yaml.YAMLError as exc:
-        print(exc)
+# ###############################################
+# 6. Start updating this stuff to rancher baby
+# -----------------------------------------------
