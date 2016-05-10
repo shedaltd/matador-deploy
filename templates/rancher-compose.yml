@@ -14,12 +14,8 @@ web:
   image: seed/alessi-mutants:staging
   expose:
     - 3000
-  volumes:
-    - /alessimedia:/usr/app/src/client/imgs
   links:
     - db:alessidb
-  labels:
-    io.rancher.scheduler.affinity:host_label: client=appname,env=staging
 db:
   image: mongo:3
   container_name: alessidb

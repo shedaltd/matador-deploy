@@ -34,10 +34,7 @@ web:
   - 3000
   image: seed/testing-test:latest
   labels:
-    io.rancher.scheduler.affinity:host_label: client=appname,env=staging
     io.rancher.scheduler.local: 'false'
   links:
   - db:alessidb
   unknown: somethingElse
-  volumes:
-  - /alessimedia:/usr/app/src/client/imgs

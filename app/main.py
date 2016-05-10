@@ -40,7 +40,7 @@ compose_builder = imp.load_source('compose_builder', './app/src/compose_builder.
 
 # Setup GLOBAL Env Vars passed in from command line
 ENV_ARGUMENT = "prod"
-CATTLE_URL = 'http://localhost:8080/v1'
+CATTLE_URL = 'http://localhost:8080/v1/'
 CATTLE_ACCESS_KEY = '9F68C78100A2CAA209EC'
 CATTLE_SECRET_KEY = 'pEkMsBYjcZNxhY4rzYuEfdLLj7mDBZ8EPYwbtgVZ'
 
@@ -84,5 +84,27 @@ client = cattle.Client(
     access_key = CATTLE_ACCESS_KEY,
     secret_key = CATTLE_SECRET_KEY
 )
+
+# print dir(client)
+
+
+# rancher_data = {}
+# rancher_data['description'] = "This is a great"
+# rancher_data['dockerCompose'] = './templates/default-docker-compose.yml'
+# rancher_data['rancherCompose'] = './templates/rancher-compose.yml'
+# rancher_data['startOnCreate'] = True
+# rancher_data['name'] = "Test Env"
+# rancher_data['id'] = '0a23n1l451'
+
+print "Getting Environments"
+
+req_dict = {}
+req_dict['id'] = '0a23n1l451'
+req_dict['type'] = 'schema'
+req_dict['links'] = {}
+req_dict['links']['self'] = 'https://base/v1/schemas/folder'
+
+client.create_environment(req_dict)
+
 
 print "Got Here"
