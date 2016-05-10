@@ -40,9 +40,9 @@ compose_builder = imp.load_source('compose_builder', './app/src/compose_builder.
 
 # Setup GLOBAL Env Vars passed in from command line
 ENV_ARGUMENT = "prod"
-RANCHER_SECRET_KEY = "dfasf"
-RANCHER_API_THING = "dfasf"
-RANCHER_URL = "dfasf"
+CATTLE_URL = 'http://localhost:8080/v1'
+CATTLE_ACCESS_KEY = '9F68C78100A2CAA209EC'
+CATTLE_SECRET_KEY = 'pEkMsBYjcZNxhY4rzYuEfdLLj7mDBZ8EPYwbtgVZ'
 
 
 # ##################################
@@ -73,3 +73,16 @@ yml_reader.saveRancherComposeFile(rancher_compose_file)
 # ###############################################
 # 6. Start updating this stuff to rancher baby
 # -----------------------------------------------
+
+# import imp
+# cattle = imp.load_source('cattle', './app/libs/cattle-0.5.4/cattle.py')
+
+import cattle
+
+client = cattle.Client(
+    url = CATTLE_URL,
+    access_key = CATTLE_ACCESS_KEY,
+    secret_key = CATTLE_SECRET_KEY
+)
+
+print "Got Here"
