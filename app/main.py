@@ -33,8 +33,27 @@ rancher_compose = imp.load_source('rancher_compose', './app/src/rancher_compose.
 # #####################################################
 # 1. Confirming Command Config and Required Arguments
 # -----------------------------------------------------
-# if arguments.noSystemArgsExist(sys.argv):
-    # arguments.printHelpDocumentationThenExit()
+if arguments.noSystemArgsExist(sys.argv):
+    arguments.printHelpDocumentationThenExit()
+
+# arguments.parseArguments(sys.argv)
+if arguments.doFlagsExist(sys.argv):
+    flags = sys.argv[1]
+    arguments.checkHelpFlag(flags)
+    FORCE_MODE = arguments.setForceFlag(flags)
+    VERBOSE_MODE = arguments.setVerboseFlag(flags)
+    DEVELOPMENT_MODE = arguments.setDevelopmentFlag(flags)
+    print "Force Mode: %s" % FORCE_MODE
+    print "Verbose Mode: %s" % VERBOSE_MODE
+    print "Development Mode: %s" % DEVELOPMENT_MODE
+
+arguments.checkArgumentStructure(sys.argv)
+
+
+
+
+print "Stopping App Execution"
+print sys.exit(0)
 
 #TODO: Add flag reading stuff in here
 
