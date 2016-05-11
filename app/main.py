@@ -48,8 +48,8 @@ RANCHER_SECRET_KEY = 'pEkMsBYjcZNxhY4rzYuEfdLLj7mDBZ8EPYwbtgVZ'
 # ##################################
 # 2. Reading YAML Files Into Script
 # ----------------------------------
-rancher_compose_file = yml_reader.readComposeFile()
-docker_compose_file = yml_reader.readDockerComposeFile()
+rancher_compose_list = yml_reader.readRancherComposeTemplate()
+docker_compose_list = yml_reader.readDockerComposeTemplate()
 config_file = yml_reader.readConfigurationFile()
 global_config = yml_reader.getGlobalConfig()
 env_config = yml_reader.getEnvConfig(ENV_ARGUMENT)
@@ -58,18 +58,19 @@ env_config = yml_reader.getEnvConfig(ENV_ARGUMENT)
 # ##################################################
 # 3. Combine config into the rancher compose
 # --------------------------------------------------
-compose_builder.addConfigToRancherCompose(rancher_compose_file, global_config)
-compose_builder.addConfigToRancherCompose(rancher_compose_file, env_config)
+compose_builder.addConfigToDockerCompose(docker_compose_list, global_config)
+compose_builder.addConfigToDockerCompose(docker_compose_list, env_config)
 
 # ###############################################
 # 4. Set the image for the deployment
 # -----------------------------------------------
-compose_builder.setImageForRancherConfig(rancher_compose_file, ENV_ARGUMENT, config_file['image_base'])
+compose_builder.setImageForDockerConfig(docker_compose_list, ENV_ARGUMENT, config_file['image_base'])
 
 # ###############################################
 # 5. Save new yml out to a temp file
 # -----------------------------------------------
-yml_reader.saveRancherComposeFile(rancher_compose_file)
+yml_reader.saveRancherComposeFile(rancher_compose_list)
+yml_reader.saveDockerComposeFile(docker_compose_list)
 
 # ###############################################
 # 6. Start updating this stuff to rancher baby

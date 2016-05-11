@@ -13,17 +13,17 @@
 #
 import yaml
 
-def readComposeFile():
+def readRancherComposeTemplate():
     # Load in out base rancher template
-    with open("templates/rancher-compose.yml", 'r') as stream:
+    with open("templates/rancher-compose-template.yml", 'r') as stream:
         try:
             return yaml.load(stream)
         except yaml.YAMLError as exc:
             print(exc)
 
-def readDockerComposeFile():
+def readDockerComposeTemplate():
     # Load in out base rancher template
-    with open("templates/default-docker-compose.yml", 'r') as stream:
+    with open("templates/docker-compose-template.yml", 'r') as stream:
         try:
             return yaml.load(stream)
         except yaml.YAMLError as exc:
@@ -45,10 +45,18 @@ def getEnvConfig(environment):
     config_file = readConfigurationFile()
     return config_file[environment]
 
-def saveRancherComposeFile(rancher_compose_file):
+def saveRancherComposeFile(rancher_compose_list):
     # Writing out the yaml object to a file
-    with open('result.yml', 'w') as new_yaml_file:
+    with open('./build/rancher-compose.yml', 'w') as new_yaml_file:
         try:
-            new_yaml_file.write(yaml.dump(rancher_compose_file, default_flow_style=False))
+            new_yaml_file.write(yaml.dump(rancher_compose_list, default_flow_style=False))
+        except yaml.YAMLError as exc:
+            print(exc)
+
+def saveDockerComposeFile(docker_compose_list):
+    # Writing out the yaml object to a file
+    with open('./build/docker-compose.yml', 'w') as new_yaml_file:
+        try:
+            new_yaml_file.write(yaml.dump(docker_compose_list, default_flow_style=False))
         except yaml.YAMLError as exc:
             print(exc)
