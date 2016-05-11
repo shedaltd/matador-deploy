@@ -21,6 +21,14 @@ def readComposeFile():
         except yaml.YAMLError as exc:
             print(exc)
 
+def readDockerComposeFile():
+    # Load in out base rancher template
+    with open("templates/default-docker-compose.yml", 'r') as stream:
+        try:
+            return yaml.load(stream)
+        except yaml.YAMLError as exc:
+            print(exc)
+
 def readConfigurationFile():
     # Load in our configuration file
     with open("templates/config.yml", 'r') as stream:
