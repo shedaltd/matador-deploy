@@ -13,6 +13,12 @@
 #
 
 import sys
+import logging
+
+logger = logging.getLogger('Rancher Deployment')
+
+logger.error("Iside Arguments")
+logger.debug("Inasie argse")
 
 def noSystemArgsExist(arguments):
     if len(arguments) == 1:
@@ -40,8 +46,21 @@ def checkArgumentStructure(arguments):
     args_init_index = 1;
     if not arguments[1] == '--url':
         args_init_index = 2;
-
-
+    if len(arguments) < 9:
+        print "ERROR: Not enough arguments passed. Please use the [-h] flag for usage instructions."
+        sys.exit(0)
+    if not arguments[args_init_index] == '--url':
+        print "ERROR: [--url] not present. Either the [--url] argument was not supplied or was not supplied in the correct order."
+        sys.exit(0)
+    if not arguments[args_init_index + 2] == '--key':
+        print "ERROR: [--key] not present. Either the [--key] argument was not supplied or was not supplied in the correct order."
+        sys.exit(0)
+    if not arguments[args_init_index + 4] == '--secret':
+        print "ERROR: [--secret] not present. Either the [--secret] argument was not supplied or was not supplied in the correct order."
+        sys.exit(0)
+    if not arguments[args_init_index + 6] == '--env':
+        print "ERROR: [--env] not present. Either the [--env] argument was not supplied or was not supplied in the correct order."
+        sys.exit(0)
 
 def doFlagsExist(arguments):
     return not arguments[1] == '--url'
@@ -59,3 +78,27 @@ def setVerboseFlag(flags):
 
 def setDevelopmentFlag(flags):
     return 'd' in flags
+
+def setRancherUrl(arguments):
+    args_init_index = 1;
+    if not arguments[1] == '--url':
+        args_init_index = 2;
+    return arguments[args_init_index + 1]
+
+def setRancherKey(arguments):
+    args_init_index = 1;
+    if not arguments[1] == '--url':
+        args_init_index = 2;
+    return arguments[args_init_index + 3]
+
+def setRancherSecret(arguments):
+    args_init_index = 1;
+    if not arguments[1] == '--url':
+        args_init_index = 2;
+    return arguments[args_init_index + 5]
+
+def setEnvironment(arguments):
+    args_init_index = 1;
+    if not arguments[1] == '--url':
+        args_init_index = 2;
+    return arguments[args_init_index + 7]

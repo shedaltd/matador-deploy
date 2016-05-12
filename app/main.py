@@ -21,47 +21,82 @@
 # -----------------------------------
 import sys
 import imp
+import logging
+from rainbow_logging_handler import RainbowLoggingHandler
+
+# setup `logging` module
+logger = logging.getLogger('Rancher Deployment')
+# logger.setLevel(logging.DEBUG)
+formatter = logging.Formatter("[%(asctime)s] %(name)s %(funcName)s():%(lineno)d\t%(message)s")  # same as default
+
+# setup `RainbowLoggingHandler`
+handler = RainbowLoggingHandler(sys.stderr, color_funcName=('black', 'yellow', True))
+handler.setFormatter(formatter)
+logger.addHandler(handler)
+
+logger.error("MEssage about an error")
+logger.info("Only shown in info mode")
+logger.debug("Only shown in debug mode")
 
 # ###################################
-# Custom Python Modules
+# Importing Args Modules
 # -----------------------------------
 arguments = imp.load_source('arguments', './app/src/arguments.py')
-yml_reader = imp.load_source('yml_reader', './app/src/yml_reader.py')
-compose_builder = imp.load_source('compose_builder', './app/src/compose_builder.py')
-rancher_compose = imp.load_source('rancher_compose', './app/src/rancher_compose.py')
+
+
 
 # #####################################################
 # 1. Confirming Command Config and Required Arguments
 # -----------------------------------------------------
+# Check to see if arguments have been passed at all
 if arguments.noSystemArgsExist(sys.argv):
     arguments.printHelpDocumentationThenExit()
 
-# arguments.parseArguments(sys.argv)
+# Check for the existance of flags
 if arguments.doFlagsExist(sys.argv):
     flags = sys.argv[1]
     arguments.checkHelpFlag(flags)
     FORCE_MODE = arguments.setForceFlag(flags)
     VERBOSE_MODE = arguments.setVerboseFlag(flags)
     DEVELOPMENT_MODE = arguments.setDevelopmentFlag(flags)
+else:
+    FORCE_MODE = False
+    VERBOSE_MODE = False
+    DEVELOPMENT_MODE = False
+
+if VERBOSE_MODE:
+    print "Flag Configuration - "
     print "Force Mode: %s" % FORCE_MODE
     print "Verbose Mode: %s" % VERBOSE_MODE
     print "Development Mode: %s" % DEVELOPMENT_MODE
 
-arguments.checkArgumentStructure(sys.argv)
+if not DEVELOPMENT_MODE:
+    arguments.checkArgumentStructure(sys.argv)
+    ENV_ARGUMENT = arguments.setEnvironment(sys.argv)
+    RANCHER_URL = arguments.setRancherUrl(sys.argv)
+    RANCHER_ACCESS_KEY = arguments.setRancherKey(sys.argv)
+    RANCHER_SECRET_KEY = arguments.setRancherSecret(sys.argv)
+else:
+    print "Currently In Development Mode. Setting Default Parameters"
+    ENV_ARGUMENT = "prod"
+    RANCHER_URL = 'http://localhost:8080/v1/'
+    RANCHER_ACCESS_KEY = '9F68C78100A2CAA209EC'
+    RANCHER_SECRET_KEY = 'pEkMsBYjcZNxhY4rzYuEfdLLj7mDBZ8EPYwbtgVZ'
 
-
+if VERBOSE_MODE:
+    print ""
 
 
 print "Stopping App Execution"
 print sys.exit(0)
 
-#TODO: Add flag reading stuff in here
-
-# Setup GLOBAL Env Vars passed in from command line
-ENV_ARGUMENT = "prod"
-RANCHER_URL = 'http://localhost:8080/v1/'
-RANCHER_ACCESS_KEY = '9F68C78100A2CAA209EC'
-RANCHER_SECRET_KEY = 'pEkMsBYjcZNxhY4rzYuEfdLLj7mDBZ8EPYwbtgVZ'
+# ##################################
+# Import Additional Custom Modules
+# ----------------------------------
+# NOTE: This is done here so that the global vars can be used in the inner modules
+yml_reader = imp.load_source('yml_reader', './app/src/yml_reader.py')
+compose_builder = imp.load_source('compose_builder', './app/src/compose_builder.py')
+rancher_compose = imp.load_source('rancher_compose', './app/src/rancher_compose.py')
 
 
 # ##################################

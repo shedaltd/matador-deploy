@@ -1,1 +1,2 @@
 cattle==0.5.4
+rainbow_logging_handler=2.2.2
