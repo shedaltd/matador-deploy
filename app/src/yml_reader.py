@@ -12,6 +12,9 @@
 # file system.
 #
 import yaml
+import logging
+
+logger = logging.getLogger('Rancher Deployment')
 
 def readRancherComposeTemplate():
     # Load in out base rancher template

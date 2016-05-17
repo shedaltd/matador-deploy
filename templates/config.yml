@@ -1,4 +1,5 @@
 image_base: seed/testing-test
+project_name: tester
 global:
   web:
     environment:

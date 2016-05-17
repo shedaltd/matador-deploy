@@ -21,6 +21,7 @@
 # -----------------------------------
 import sys
 import imp
+import cattle
 import logging
 from rainbow_logging_handler import RainbowLoggingHandler
 
@@ -79,13 +80,12 @@ if not DEVELOPMENT_MODE:
     RANCHER_SECRET_KEY = arguments.setRancherSecret(sys.argv)
 else:
     logger.info("INFO: Currently In Development Mode. Setting Default Parameters.")
-    ENV_ARGUMENT = "prod"
+    ENV_ARGUMENT = "dev"
     RANCHER_URL = 'http://localhost:8080/v1/'
     RANCHER_ACCESS_KEY = '9F68C78100A2CAA209EC'
     RANCHER_SECRET_KEY = 'pEkMsBYjcZNxhY4rzYuEfdLLj7mDBZ8EPYwbtgVZ'
 
 if not FORCE_MODE:
-
     print "Rancher Arguments Set"
     print "ENVIRONMENT: %s" % ENV_ARGUMENT
     logger.debug("DEBUG: RANCHER_URL: %s", RANCHER_URL)
@@ -93,23 +93,19 @@ if not FORCE_MODE:
     logger.debug("DEBUG: RANCHER_SECRET_KEY: %s", RANCHER_SECRET_KEY)
     print "Would you like to continue?"
     var = raw_input("Please enter (Y|N): ")
-    flag = False
     if var == "y" or var == "Y":
         print "User Confirmation Accepted. Performing Rancher Deployment"
-        logger.debug("DEBUG: Please use the [-f] flag to force application execution")
+        logger.debug("DEBUG: Please use the [-f] flag to force application execution and skip confirmation")
     elif var == "n" or var == "N":
         logger.error("ERROR: User stopped app execution.")
-        logger.debug("DEBUG: Please use the [-f] flag to force application execution")
+        logger.debug("DEBUG: Please use the [-f] flag to force application execution and skip confirmation")
         print sys.exit(0)
     else:
         logger.error("ERROR: Invalid User Input")
-        logger.error("ERROR: Please use the [-f] flag to force application execution")
+        logger.error("ERROR: Please use the [-f] flag to force application execution and skip confirmation")
         print sys.exit(0)
 else:
     logger.info("INFO: Force Mode Enabled. Skipping Flag Confirmation")
-
-print "Stopping App Execution"
-print sys.exit(0)
 
 # ##################################
 # Import Additional Custom Modules
@@ -128,7 +124,7 @@ docker_compose_list = yml_reader.readDockerComposeTemplate()
 config_file = yml_reader.readConfigurationFile()
 global_config = yml_reader.getGlobalConfig()
 env_config = yml_reader.getEnvConfig(ENV_ARGUMENT)
-
+PROJECT_NAME = config_file['project_name'] + "-" + ENV_ARGUMENT
 
 # ##################################################
 # 3. Combine config into the rancher compose
@@ -150,5 +146,11 @@ yml_reader.saveDockerComposeFile(docker_compose_list)
 # ###############################################
 # 6. Start updating this stuff to rancher baby
 # -----------------------------------------------
-rancher_compose.setRancherVars(RANCHER_URL, RANCHER_ACCESS_KEY, RANCHER_SECRET_KEY)
+cattle_client = cattle.Client(
+    url=RANCHER_URL,
+    access_key=RANCHER_ACCESS_KEY,
+    secret_key=RANCHER_SECRET_KEY
+)
+rancher_compose.setRancherVars(RANCHER_URL, RANCHER_ACCESS_KEY, RANCHER_SECRET_KEY, PROJECT_NAME)
+rancher_compose.checkForExistingEnvironment(cattle_client, PROJECT_NAME)
 rancher_compose.pushToRancher()
