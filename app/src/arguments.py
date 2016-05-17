@@ -17,9 +17,6 @@ import logging
 
 logger = logging.getLogger('Rancher Deployment')
 
-logger.error("Iside Arguments")
-logger.debug("Inasie argse")
-
 def noSystemArgsExist(arguments):
     if len(arguments) == 1:
         print "ERROR: No Arguments Found. Please Read Documentation For Usage Instructions.\n"
@@ -47,19 +44,19 @@ def checkArgumentStructure(arguments):
     if not arguments[1] == '--url':
         args_init_index = 2;
     if len(arguments) < 9:
-        print "ERROR: Not enough arguments passed. Please use the [-h] flag for usage instructions."
+        logger.error("ERROR: Not enough arguments passed. Please use the [-h] flag for usage instructions.")
         sys.exit(0)
     if not arguments[args_init_index] == '--url':
-        print "ERROR: [--url] not present. Either the [--url] argument was not supplied or was not supplied in the correct order."
+        logger.error("ERROR: [--url] not present. Either the [--url] argument was not supplied or was not supplied in the correct order.")
         sys.exit(0)
     if not arguments[args_init_index + 2] == '--key':
-        print "ERROR: [--key] not present. Either the [--key] argument was not supplied or was not supplied in the correct order."
+        logger.error("ERROR: [--key] not present. Either the [--key] argument was not supplied or was not supplied in the correct order.")
         sys.exit(0)
     if not arguments[args_init_index + 4] == '--secret':
-        print "ERROR: [--secret] not present. Either the [--secret] argument was not supplied or was not supplied in the correct order."
+        logger.error("ERROR: [--secret] not present. Either the [--secret] argument was not supplied or was not supplied in the correct order.")
         sys.exit(0)
     if not arguments[args_init_index + 6] == '--env':
-        print "ERROR: [--env] not present. Either the [--env] argument was not supplied or was not supplied in the correct order."
+        logger.error("ERROR: [--env] not present. Either the [--env] argument was not supplied or was not supplied in the correct order.")
         sys.exit(0)
 
 def doFlagsExist(arguments):

@@ -24,26 +24,25 @@ import imp
 import logging
 from rainbow_logging_handler import RainbowLoggingHandler
 
+print "Running SEED Digital Rancher Deployment Script.\n"
+
 # setup `logging` module
 logger = logging.getLogger('Rancher Deployment')
 # logger.setLevel(logging.DEBUG)
-formatter = logging.Formatter("[%(asctime)s] %(name)s %(funcName)s():%(lineno)d\t%(message)s")  # same as default
+formatter = logging.Formatter("%(message)s")  # same as default
 
 # setup `RainbowLoggingHandler`
-handler = RainbowLoggingHandler(sys.stderr, color_funcName=('black', 'yellow', True))
+handler = RainbowLoggingHandler(sys.stderr,
+    color_funcName=('black', 'yellow', True),
+    color_module=('yellow', None, False))
+
 handler.setFormatter(formatter)
 logger.addHandler(handler)
-
-logger.error("MEssage about an error")
-logger.info("Only shown in info mode")
-logger.debug("Only shown in debug mode")
 
 # ###################################
 # Importing Args Modules
 # -----------------------------------
 arguments = imp.load_source('arguments', './app/src/arguments.py')
-
-
 
 # #####################################################
 # 1. Confirming Command Config and Required Arguments
@@ -65,10 +64,12 @@ else:
     DEVELOPMENT_MODE = False
 
 if VERBOSE_MODE:
-    print "Flag Configuration - "
-    print "Force Mode: %s" % FORCE_MODE
-    print "Verbose Mode: %s" % VERBOSE_MODE
-    print "Development Mode: %s" % DEVELOPMENT_MODE
+    logger.setLevel(logging.DEBUG)
+
+logger.info("INFO: Flag Configuration Set")
+logger.debug("DEBUG: Force Mode: %s", FORCE_MODE)
+logger.debug("DEBUG: Verbose Mode: %s", VERBOSE_MODE)
+logger.debug("DEBUG: Development Mode: %s\n", DEVELOPMENT_MODE)
 
 if not DEVELOPMENT_MODE:
     arguments.checkArgumentStructure(sys.argv)
@@ -77,15 +78,35 @@ if not DEVELOPMENT_MODE:
     RANCHER_ACCESS_KEY = arguments.setRancherKey(sys.argv)
     RANCHER_SECRET_KEY = arguments.setRancherSecret(sys.argv)
 else:
-    print "Currently In Development Mode. Setting Default Parameters"
+    logger.info("INFO: Currently In Development Mode. Setting Default Parameters.")
     ENV_ARGUMENT = "prod"
     RANCHER_URL = 'http://localhost:8080/v1/'
     RANCHER_ACCESS_KEY = '9F68C78100A2CAA209EC'
     RANCHER_SECRET_KEY = 'pEkMsBYjcZNxhY4rzYuEfdLLj7mDBZ8EPYwbtgVZ'
 
-if VERBOSE_MODE:
-    print ""
+if not FORCE_MODE:
 
+    print "Rancher Arguments Set"
+    print "ENVIRONMENT: %s" % ENV_ARGUMENT
+    logger.debug("DEBUG: RANCHER_URL: %s", RANCHER_URL)
+    logger.debug("DEBUG: RANCHER_ACCESS_KEY: %s", RANCHER_ACCESS_KEY)
+    logger.debug("DEBUG: RANCHER_SECRET_KEY: %s", RANCHER_SECRET_KEY)
+    print "Would you like to continue?"
+    var = raw_input("Please enter (Y|N): ")
+    flag = False
+    if var == "y" or var == "Y":
+        print "User Confirmation Accepted. Performing Rancher Deployment"
+        logger.debug("DEBUG: Please use the [-f] flag to force application execution")
+    elif var == "n" or var == "N":
+        logger.error("ERROR: User stopped app execution.")
+        logger.debug("DEBUG: Please use the [-f] flag to force application execution")
+        print sys.exit(0)
+    else:
+        logger.error("ERROR: Invalid User Input")
+        logger.error("ERROR: Please use the [-f] flag to force application execution")
+        print sys.exit(0)
+else:
+    logger.info("INFO: Force Mode Enabled. Skipping Flag Confirmation")
 
 print "Stopping App Execution"
 print sys.exit(0)
