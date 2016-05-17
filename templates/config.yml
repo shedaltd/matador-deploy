@@ -1,4 +1,4 @@
-image_base: seed/testing-test
+image_base: seed/alessi-mutants
 project_name: tester
 global:
   web:
@@ -8,10 +8,15 @@ dev:
   web:
     environment:
       - NODE_ENV=dev
+    labels:
+      io.rancher.scheduler.affinity:host_label: client=ibackpacker,env=development
 staging:
   web:
     environment:
       - NODE_ENV=staging
+    labels:
+    #   io.rancher.scheduler.affinity:host_label: client=alessi,env=staging
+      com.alessimutants.pods: version=0.1,branch=dev
 prod:
   lb:
     labels:

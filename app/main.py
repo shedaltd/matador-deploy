@@ -80,7 +80,7 @@ if not DEVELOPMENT_MODE:
     RANCHER_SECRET_KEY = arguments.setRancherSecret(sys.argv)
 else:
     logger.info("INFO: Currently In Development Mode. Setting Default Parameters.")
-    ENV_ARGUMENT = "dev"
+    ENV_ARGUMENT = "staging"
     RANCHER_URL = 'http://localhost:8080/v1/'
     RANCHER_ACCESS_KEY = '9F68C78100A2CAA209EC'
     RANCHER_SECRET_KEY = 'pEkMsBYjcZNxhY4rzYuEfdLLj7mDBZ8EPYwbtgVZ'

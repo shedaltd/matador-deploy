@@ -13,9 +13,12 @@
 #
 
 from subprocess import call
+import logging
+
+logger = logging.getLogger('Rancher Deployment')
 
 base_command = []
-env_exists = False
+module = {'ENV_EXISTS': False}
 
 def setRancherVars(RANCHER_URL, RANCHER_ACCESS_KEY, RANCHER_SECRET_KEY, PROJECT_NAME):
     RANCHER_URL = RANCHER_URL
@@ -24,15 +27,21 @@ def setRancherVars(RANCHER_URL, RANCHER_ACCESS_KEY, RANCHER_SECRET_KEY, PROJECT_
     base_command.extend(["./rancher/rancher-compose", "--url", RANCHER_URL, "--access-key", RANCHER_ACCESS_KEY, "--secret-key", RANCHER_SECRET_KEY, "-f", "./build/docker-compose.yml", "-p", PROJECT_NAME, "-r", "./build/rancher-compose.yml"])
 
 def checkForExistingEnvironment(cattle_client, PROJECT_NAME):
+    logger.debug("DEBUG: Searching Environments For PROJECT_NAME: %s", PROJECT_NAME)
     client_envs = cattle_client.list_environment()
+    logger.debug("DEBUG: Total Environments Retrieved from Rancher: %s", len(client_envs.data))
     for environment in client_envs.data:
+        logger.debug("DEBUG: Comparing Env: %s", environment.name)
         if environment.name == PROJECT_NAME:
-            env_exists = True;
+            logger.debug("DEBUG: ENVIRONMENT MATCH FOUND")
+            module['ENV_EXISTS'] = True;
 
 def pushToRancher():
     up_command = list(base_command)
     up_command.extend(["up", "-d"])
     # Here if the environment exists, we want to add the update flags to the end of our base command
-    if env_exists:
+    if module['ENV_EXISTS']:
         up_command.extend(["--force-upgrade","--confirm-upgrade", "--pull"]);
+    logger.debug("DEBUG: Running Rancher Compose:")
+    logger.debug("DEBUG: Command: %s", up_command)
     call(up_command)
