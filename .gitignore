@@ -3,3 +3,4 @@
 /build
 /dist
 /matador_deploy.egg-info
+/app/__pycache__
