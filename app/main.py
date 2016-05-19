@@ -160,3 +160,4 @@ def main():
     rancher_compose.setRancherVars(RANCHER_URL, RANCHER_ACCESS_KEY, RANCHER_SECRET_KEY, PROJECT_NAME)
     rancher_compose.checkForExistingEnvironment(cattle_client, PROJECT_NAME)
     rancher_compose.pushToRancher()
+main()

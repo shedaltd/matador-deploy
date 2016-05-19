@@ -16,6 +16,7 @@ setup(
     description = 'A Bullish Rancher Deployment CLI App',
     # long_description = long_description,
     url = 'https://github.com/seedtech/rancher-deploy',
+    download_url = 'https://github.com/seedtech/rancher-deploy/archive/0.1.tar.gz',
     author = 'Timon Sotiropoulos',
     author_email = 'timon@seeddigital.co',
     license = 'MIT',
