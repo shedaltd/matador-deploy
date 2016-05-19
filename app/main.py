@@ -2,7 +2,7 @@
 # ------------------------------------------------------------------------------
 # LICENCE INFORMATION
 # ------------------------------------------------------------------------------
-# Ganado Deploy - SEED DIGITAL (C) 2016
+# Matador Deploy - SEED DIGITAL (C) 2016
 # Rancher Deployment Assitant Script
 #
 # Author: Timon C Sotiropoulos
@@ -27,6 +27,7 @@ import logging
 from rainbow_logging_handler import RainbowLoggingHandler
 
 def main():
+    print "Starting Main Application"
     # setup `logging` module
     logger = logging.getLogger('Rancher Deployment')
     # logger.setLevel(logging.DEBUG)
@@ -39,11 +40,14 @@ def main():
 
     handler.setFormatter(formatter)
     logger.addHandler(handler)
-
+    print "Starting Main Application 2"
     # ###################################
     # Importing Args Modules
     # -----------------------------------
-    arguments = imp.load_source('arguments', './app/src/arguments.py')
+    from src import arguments
+    # arguments = imp.load_source('arguments', './app/src/arguments.py')
+
+    print "Starting Main Application 3"
 
     # #####################################################
     # 1. Confirming Command Config and Required Arguments
@@ -112,14 +116,17 @@ def main():
         logger.info("INFO: Force Mode Enabled. Skipping Flag Confirmation")
 
 
-    print "Starting Ganado Deploy..."
+    print "Starting Matador Deploy..."
     # ##################################
     # Import Additional Custom Modules
     # ----------------------------------
     # NOTE: This is done here so that the global vars can be used in the inner modules
-    yml_reader = imp.load_source('yml_reader', './app/src/yml_reader.py')
-    compose_builder = imp.load_source('compose_builder', './app/src/compose_builder.py')
-    rancher_compose = imp.load_source('rancher_compose', './app/src/rancher_compose.py')
+    from src import yml_reader
+    from src import compose_builder
+    from src import rancher_compose
+    # yml_reader = imp.load_source('yml_reader', './app/src/yml_reader.py')
+    # compose_builder = imp.load_source('compose_builder', './app/src/compose_builder.py')
+    # rancher_compose = imp.load_source('rancher_compose', './app/src/rancher_compose.py')
 
 
     # ##################################

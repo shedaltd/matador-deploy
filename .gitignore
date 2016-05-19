@@ -1,3 +1,5 @@
 /commands
 /rancher
 /build
+/dist/matador_deploy-0.0.1-py2.7.egg
+/matador_deploy.egg-info

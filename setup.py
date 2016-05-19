@@ -3,20 +3,17 @@
 
 from codecs import open
 from os.path import abspath, dirname, join
-
 from setuptools import Command, find_packages, setup
-
 from app import __version__
-
 
 this_dir = abspath(dirname(__file__))
 with open(join(this_dir, 'README.md'), encoding='utf-8') as file:
     long_description = file.read()
 
 setup(
-    name = 'ganado-deploy',
+    name = 'matador-deploy',
     version = __version__,
-    description = 'A Rancher Deployment CLI App',
+    description = 'A Bullish Rancher Deployment CLI App',
     long_description = long_description,
     url = 'https://github.com/seedtech/rancher-deploy',
     author = 'Timon Sotiropoulos',
@@ -37,14 +34,14 @@ setup(
         'Programming Language :: Python :: 3.4',
     ],
     keywords = 'cli',
-    packages = find_packages(exclude=['docs', 'tests*']),
-    install_requires = ['docopt'],
-    extras_require = {
-        'test': ['coverage', 'pytest', 'pytest-cov'],
-    },
+    packages = find_packages(),
+    install_requires = [
+        "cattle==0.5.4",
+        "rainbow_logging_handler==2.2.2"
+    ],
     entry_points = {
         'console_scripts': [
-            'ganado-deploy=app.main:main',
+            'matador-deploy=app.main:main',
         ],
     },
 )

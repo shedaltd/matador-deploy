@@ -25,12 +25,12 @@ def noSystemArgsExist(arguments):
     return len(arguments) == 1
 
 def printHelpDocumentationThenExit():
-    print "Ganado-Deploy - Rancher Deployment Assitant Script\n"
+    print "Matador-Deploy - Rancher Deployment Assitant Script\n"
     print "Author: SEED Digital\n"
     print "This script will assist you in updating your rancher environment."
     print "All the following command line arguments are required to update rancher\n"
     print "Version: v%s" % __version__
-    call(["./rancher/rancher-compose", "-v"])
+    call(["rancher-compose", "-v"])
     print ""
     print "Usage: [-flags] --url <http://example.com> --key <key> --secret <secret_key> --env [dev|staging|prod]"
     print "  --url \t url to connect to your rancher server"
@@ -45,12 +45,12 @@ def printHelpDocumentationThenExit():
     print "  -d  \t Development Mode: will bypass command line arguments and set default values for Rancher configuration"
     print ""
     print "  Version Information"
-    print "  --version  \t Print out the current version of ganado-deploy and the local installed version of rancher-compose"
+    print "  --version  \t Print out the current version of matador-deploy and the local installed version of rancher-compose"
     sys.exit(0)
 
 def printVersionInformationThenExit():
-    print "ganado-deploy version v%s" % __version__
-    call(["./rancher/rancher-compose", "-v"])
+    print "matador-deploy version v%s" % __version__
+    call(["rancher-compose", "-v"])
     sys.exit(0)
 
 def checkArgumentStructure(arguments):
