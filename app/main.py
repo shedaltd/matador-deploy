@@ -27,7 +27,6 @@ import logging
 from rainbow_logging_handler import RainbowLoggingHandler
 
 def main():
-    print "Starting Main Application"
     # setup `logging` module
     logger = logging.getLogger('Rancher Deployment')
     # logger.setLevel(logging.DEBUG)
@@ -40,13 +39,11 @@ def main():
 
     handler.setFormatter(formatter)
     logger.addHandler(handler)
-    print "Starting Main Application 2"
+
     # ###################################
     # Importing Args Modules
     # -----------------------------------
     from src import arguments
-
-    print "Starting Main Application 3"
 
     # #####################################################
     # 1. Confirming Command Config and Required Arguments
@@ -148,6 +145,7 @@ def main():
     # ###############################################
     # 5. Save new yml out to a temp file
     # -----------------------------------------------
+    yml_reader.createBuildDirectory()
     yml_reader.saveRancherComposeFile(rancher_compose_list)
     yml_reader.saveDockerComposeFile(docker_compose_list)
 
@@ -162,5 +160,3 @@ def main():
     rancher_compose.setRancherVars(RANCHER_URL, RANCHER_ACCESS_KEY, RANCHER_SECRET_KEY, PROJECT_NAME)
     rancher_compose.checkForExistingEnvironment(cattle_client, PROJECT_NAME)
     rancher_compose.pushToRancher()
-
-main()

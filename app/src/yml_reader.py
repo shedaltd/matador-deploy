@@ -11,6 +11,7 @@
 # This module handles reading all the yml configuration files in from the
 # file system.
 #
+import os
 import sys
 import yaml
 import logging
@@ -67,6 +68,14 @@ def getEnvConfig(environment):
     logger.debug("DEBUG: Environment Extracting: %s", environment)
     config_file = readConfigurationFile()
     return config_file[environment]
+
+def createBuildDirectory():
+    logger.debug("DEBUG: Searching for build directory")
+    if not os.path.isdir("build"):
+        logger.debug("DEBUG: build directory not found, creating now")
+        os.makedirs('build')
+    else:
+        logger.debug("DEBUG: build directory found")
 
 def saveRancherComposeFile(rancher_compose_list):
     logger.debug("DEBUG: Attempting to Save New Rancher Compose File")
