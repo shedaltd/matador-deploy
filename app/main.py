@@ -27,130 +27,131 @@ from rainbow_logging_handler import RainbowLoggingHandler
 
 print "Running SEED Digital Rancher Deployment Script.\n"
 
-# setup `logging` module
-logger = logging.getLogger('Rancher Deployment')
-# logger.setLevel(logging.DEBUG)
-formatter = logging.Formatter("%(message)s")  # same as default
+def main():
+    # setup `logging` module
+    logger = logging.getLogger('Rancher Deployment')
+    # logger.setLevel(logging.DEBUG)
+    formatter = logging.Formatter("%(message)s")  # same as default
 
-# setup `RainbowLoggingHandler`
-handler = RainbowLoggingHandler(sys.stderr,
-    color_funcName=('black', 'yellow', True),
-    color_module=('yellow', None, False))
+    # setup `RainbowLoggingHandler`
+    handler = RainbowLoggingHandler(sys.stderr,
+        color_funcName=('black', 'yellow', True),
+        color_module=('yellow', None, False))
 
-handler.setFormatter(formatter)
-logger.addHandler(handler)
+    handler.setFormatter(formatter)
+    logger.addHandler(handler)
 
-# ###################################
-# Importing Args Modules
-# -----------------------------------
-arguments = imp.load_source('arguments', './app/src/arguments.py')
+    # ###################################
+    # Importing Args Modules
+    # -----------------------------------
+    arguments = imp.load_source('arguments', './app/src/arguments.py')
 
-# #####################################################
-# 1. Confirming Command Config and Required Arguments
-# -----------------------------------------------------
-# Check to see if arguments have been passed at all
-if arguments.noSystemArgsExist(sys.argv):
-    arguments.printHelpDocumentationThenExit()
+    # #####################################################
+    # 1. Confirming Command Config and Required Arguments
+    # -----------------------------------------------------
+    # Check to see if arguments have been passed at all
+    if arguments.noSystemArgsExist(sys.argv):
+        arguments.printHelpDocumentationThenExit()
 
-# Check for the existance of flags
-if arguments.doFlagsExist(sys.argv):
-    flags = sys.argv[1]
-    arguments.checkHelpFlag(flags)
-    FORCE_MODE = arguments.setForceFlag(flags)
-    VERBOSE_MODE = arguments.setVerboseFlag(flags)
-    DEVELOPMENT_MODE = arguments.setDevelopmentFlag(flags)
-else:
-    FORCE_MODE = False
-    VERBOSE_MODE = False
-    DEVELOPMENT_MODE = False
-
-if VERBOSE_MODE:
-    logger.setLevel(logging.DEBUG)
-
-logger.info("INFO: Flag Configuration Set")
-logger.debug("DEBUG: Force Mode: %s", FORCE_MODE)
-logger.debug("DEBUG: Verbose Mode: %s", VERBOSE_MODE)
-logger.debug("DEBUG: Development Mode: %s\n", DEVELOPMENT_MODE)
-
-if not DEVELOPMENT_MODE:
-    arguments.checkArgumentStructure(sys.argv)
-    ENV_ARGUMENT = arguments.setEnvironment(sys.argv)
-    RANCHER_URL = arguments.setRancherUrl(sys.argv)
-    RANCHER_ACCESS_KEY = arguments.setRancherKey(sys.argv)
-    RANCHER_SECRET_KEY = arguments.setRancherSecret(sys.argv)
-else:
-    logger.info("INFO: Currently In Development Mode. Setting Default Parameters.")
-    ENV_ARGUMENT = "staging"
-    RANCHER_URL = 'http://localhost:8080/v1/'
-    RANCHER_ACCESS_KEY = '9F68C78100A2CAA209EC'
-    RANCHER_SECRET_KEY = 'pEkMsBYjcZNxhY4rzYuEfdLLj7mDBZ8EPYwbtgVZ'
-
-if not FORCE_MODE:
-    print "Rancher Arguments Set"
-    print "ENVIRONMENT: %s" % ENV_ARGUMENT
-    logger.debug("DEBUG: RANCHER_URL: %s", RANCHER_URL)
-    logger.debug("DEBUG: RANCHER_ACCESS_KEY: %s", RANCHER_ACCESS_KEY)
-    logger.debug("DEBUG: RANCHER_SECRET_KEY: %s", RANCHER_SECRET_KEY)
-    print "Would you like to continue?"
-    var = raw_input("Please enter (Y|N): ")
-    if var == "y" or var == "Y":
-        print "User Confirmation Accepted. Performing Rancher Deployment"
-        logger.debug("DEBUG: Please use the [-f] flag to force application execution and skip confirmation")
-    elif var == "n" or var == "N":
-        logger.error("ERROR: User stopped app execution.")
-        logger.debug("DEBUG: Please use the [-f] flag to force application execution and skip confirmation")
-        print sys.exit(0)
+    # Check for the existance of flags
+    if arguments.doFlagsExist(sys.argv):
+        flags = sys.argv[1]
+        arguments.checkHelpFlag(flags)
+        FORCE_MODE = arguments.setForceFlag(flags)
+        VERBOSE_MODE = arguments.setVerboseFlag(flags)
+        DEVELOPMENT_MODE = arguments.setDevelopmentFlag(flags)
     else:
-        logger.error("ERROR: Invalid User Input")
-        logger.error("ERROR: Please use the [-f] flag to force application execution and skip confirmation")
-        print sys.exit(0)
-else:
-    logger.info("INFO: Force Mode Enabled. Skipping Flag Confirmation")
+        FORCE_MODE = False
+        VERBOSE_MODE = False
+        DEVELOPMENT_MODE = False
 
-# ##################################
-# Import Additional Custom Modules
-# ----------------------------------
-# NOTE: This is done here so that the global vars can be used in the inner modules
-yml_reader = imp.load_source('yml_reader', './app/src/yml_reader.py')
-compose_builder = imp.load_source('compose_builder', './app/src/compose_builder.py')
-rancher_compose = imp.load_source('rancher_compose', './app/src/rancher_compose.py')
+    if VERBOSE_MODE:
+        logger.setLevel(logging.DEBUG)
+
+    logger.info("INFO: Flag Configuration Set")
+    logger.debug("DEBUG: Force Mode: %s", FORCE_MODE)
+    logger.debug("DEBUG: Verbose Mode: %s", VERBOSE_MODE)
+    logger.debug("DEBUG: Development Mode: %s\n", DEVELOPMENT_MODE)
+
+    if not DEVELOPMENT_MODE:
+        arguments.checkArgumentStructure(sys.argv)
+        ENV_ARGUMENT = arguments.setEnvironment(sys.argv)
+        RANCHER_URL = arguments.setRancherUrl(sys.argv)
+        RANCHER_ACCESS_KEY = arguments.setRancherKey(sys.argv)
+        RANCHER_SECRET_KEY = arguments.setRancherSecret(sys.argv)
+    else:
+        logger.info("INFO: Currently In Development Mode. Setting Default Parameters.")
+        ENV_ARGUMENT = "staging"
+        RANCHER_URL = 'http://localhost:8080/v1/'
+        RANCHER_ACCESS_KEY = '9F68C78100A2CAA209EC'
+        RANCHER_SECRET_KEY = 'pEkMsBYjcZNxhY4rzYuEfdLLj7mDBZ8EPYwbtgVZ'
+
+    if not FORCE_MODE:
+        print "Rancher Arguments Set"
+        print "ENVIRONMENT: %s" % ENV_ARGUMENT
+        logger.debug("DEBUG: RANCHER_URL: %s", RANCHER_URL)
+        logger.debug("DEBUG: RANCHER_ACCESS_KEY: %s", RANCHER_ACCESS_KEY)
+        logger.debug("DEBUG: RANCHER_SECRET_KEY: %s", RANCHER_SECRET_KEY)
+        print "Would you like to continue?"
+        var = raw_input("Please enter (Y|N): ")
+        if var == "y" or var == "Y":
+            print "User Confirmation Accepted. Performing Rancher Deployment"
+            logger.debug("DEBUG: Please use the [-f] flag to force application execution and skip confirmation")
+        elif var == "n" or var == "N":
+            logger.error("ERROR: User stopped app execution.")
+            logger.debug("DEBUG: Please use the [-f] flag to force application execution and skip confirmation")
+            print sys.exit(0)
+        else:
+            logger.error("ERROR: Invalid User Input")
+            logger.error("ERROR: Please use the [-f] flag to force application execution and skip confirmation")
+            print sys.exit(0)
+    else:
+        logger.info("INFO: Force Mode Enabled. Skipping Flag Confirmation")
+
+    # ##################################
+    # Import Additional Custom Modules
+    # ----------------------------------
+    # NOTE: This is done here so that the global vars can be used in the inner modules
+    yml_reader = imp.load_source('yml_reader', './app/src/yml_reader.py')
+    compose_builder = imp.load_source('compose_builder', './app/src/compose_builder.py')
+    rancher_compose = imp.load_source('rancher_compose', './app/src/rancher_compose.py')
 
 
-# ##################################
-# 2. Reading YAML Files Into Script
-# ----------------------------------
-rancher_compose_list = yml_reader.readRancherComposeTemplate()
-docker_compose_list = yml_reader.readDockerComposeTemplate()
-config_file = yml_reader.readConfigurationFile()
-global_config = yml_reader.getGlobalConfig()
-env_config = yml_reader.getEnvConfig(ENV_ARGUMENT)
-PROJECT_NAME = config_file['project_name'] + "-" + ENV_ARGUMENT
+    # ##################################
+    # 2. Reading YAML Files Into Script
+    # ----------------------------------
+    rancher_compose_list = yml_reader.readRancherComposeTemplate()
+    docker_compose_list = yml_reader.readDockerComposeTemplate()
+    config_file = yml_reader.readConfigurationFile()
+    global_config = yml_reader.getGlobalConfig()
+    env_config = yml_reader.getEnvConfig(ENV_ARGUMENT)
+    PROJECT_NAME = config_file['project_name'] + "-" + ENV_ARGUMENT
 
-# ##################################################
-# 3. Combine config into the rancher compose
-# --------------------------------------------------
-compose_builder.addConfigToDockerCompose(docker_compose_list, global_config)
-compose_builder.addConfigToDockerCompose(docker_compose_list, env_config)
+    # ##################################################
+    # 3. Combine config into the rancher compose
+    # --------------------------------------------------
+    compose_builder.addConfigToDockerCompose(docker_compose_list, global_config)
+    compose_builder.addConfigToDockerCompose(docker_compose_list, env_config)
 
-# ###############################################
-# 4. Set the image for the deployment
-# -----------------------------------------------
-compose_builder.setImageForDockerConfig(docker_compose_list, ENV_ARGUMENT, config_file['image_base'])
+    # ###############################################
+    # 4. Set the image for the deployment
+    # -----------------------------------------------
+    compose_builder.setImageForDockerConfig(docker_compose_list, ENV_ARGUMENT, config_file['image_base'])
 
-# ###############################################
-# 5. Save new yml out to a temp file
-# -----------------------------------------------
-yml_reader.saveRancherComposeFile(rancher_compose_list)
-yml_reader.saveDockerComposeFile(docker_compose_list)
+    # ###############################################
+    # 5. Save new yml out to a temp file
+    # -----------------------------------------------
+    yml_reader.saveRancherComposeFile(rancher_compose_list)
+    yml_reader.saveDockerComposeFile(docker_compose_list)
 
-# ###############################################
-# 6. Start updating this stuff to rancher baby
-# -----------------------------------------------
-cattle_client = cattle.Client(
-    url=RANCHER_URL,
-    access_key=RANCHER_ACCESS_KEY,
-    secret_key=RANCHER_SECRET_KEY
-)
-rancher_compose.setRancherVars(RANCHER_URL, RANCHER_ACCESS_KEY, RANCHER_SECRET_KEY, PROJECT_NAME)
-rancher_compose.checkForExistingEnvironment(cattle_client, PROJECT_NAME)
-rancher_compose.pushToRancher()
+    # ###############################################
+    # 6. Start updating this stuff to rancher baby
+    # -----------------------------------------------
+    cattle_client = cattle.Client(
+        url=RANCHER_URL,
+        access_key=RANCHER_ACCESS_KEY,
+        secret_key=RANCHER_SECRET_KEY
+    )
+    rancher_compose.setRancherVars(RANCHER_URL, RANCHER_ACCESS_KEY, RANCHER_SECRET_KEY, PROJECT_NAME)
+    rancher_compose.checkForExistingEnvironment(cattle_client, PROJECT_NAME)
+    rancher_compose.pushToRancher()

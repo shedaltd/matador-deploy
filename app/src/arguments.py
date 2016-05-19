@@ -37,6 +37,9 @@ def printHelpDocumentationThenExit():
     print "    -f  \t Force Mode: force the application to run and supress all warnings"
     print "    -v  \t Verbose Mode: print additional messages are processes run"
     print "    -d  \t Development Mode: will bypass command line arguments and set default values for Rancher configuration"
+    print ""
+    print "    Version Information
+    print "    --version  \t Print out the current version of ganado-deploy and the local installed version of rancher-compose
     sys.exit(0);
 
 def checkArgumentStructure(arguments):
