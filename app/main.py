@@ -2,7 +2,8 @@
 # ------------------------------------------------------------------------------
 # LICENCE INFORMATION
 # ------------------------------------------------------------------------------
-# Rancher Deployment Script - SEED DIGITAL (C) 2016
+# Ganado Deploy - SEED DIGITAL (C) 2016
+# Rancher Deployment Assitant Script
 #
 # Author: Timon C Sotiropoulos
 # Contact: timon@seeddigital.co
@@ -24,8 +25,6 @@ import imp
 import cattle
 import logging
 from rainbow_logging_handler import RainbowLoggingHandler
-
-print "Running SEED Digital Rancher Deployment Script.\n"
 
 def main():
     # setup `logging` module
@@ -52,6 +51,10 @@ def main():
     # Check to see if arguments have been passed at all
     if arguments.noSystemArgsExist(sys.argv):
         arguments.printHelpDocumentationThenExit()
+
+    # Check if we are printing out the version information
+    if arguments.isVersionCommandEntered(sys.argv):
+        arguments.printVersionInformationThenExit()
 
     # Check for the existance of flags
     if arguments.doFlagsExist(sys.argv):
@@ -108,6 +111,8 @@ def main():
     else:
         logger.info("INFO: Force Mode Enabled. Skipping Flag Confirmation")
 
+
+    print "Starting Ganado Deploy..."
     # ##################################
     # Import Additional Custom Modules
     # ----------------------------------
@@ -155,3 +160,5 @@ def main():
     rancher_compose.setRancherVars(RANCHER_URL, RANCHER_ACCESS_KEY, RANCHER_SECRET_KEY, PROJECT_NAME)
     rancher_compose.checkForExistingEnvironment(cattle_client, PROJECT_NAME)
     rancher_compose.pushToRancher()
+
+main()

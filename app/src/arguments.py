@@ -14,6 +14,8 @@
 
 import sys
 import logging
+from subprocess import call
+from app import __version__
 
 logger = logging.getLogger('Rancher Deployment')
 
@@ -23,7 +25,8 @@ def noSystemArgsExist(arguments):
     return len(arguments) == 1
 
 def printHelpDocumentationThenExit():
-    print "Rancher Deployment Script\n"
+    print "Ganado-Deploy"
+    print "Rancher Deployment Assitant Script\n"
     print "This script will assist you in updating your rancher environment."
     print "All the following command line arguments are required to update rancher\n"
     print "Usage: [-flags] --url <http://example.com> --key <key> --secret <secret_key> --env [dev|staging|prod]"
@@ -38,9 +41,14 @@ def printHelpDocumentationThenExit():
     print "    -v  \t Verbose Mode: print additional messages are processes run"
     print "    -d  \t Development Mode: will bypass command line arguments and set default values for Rancher configuration"
     print ""
-    print "    Version Information
-    print "    --version  \t Print out the current version of ganado-deploy and the local installed version of rancher-compose
-    sys.exit(0);
+    print "    Version Information"
+    print "    --version  \t Print out the current version of ganado-deploy and the local installed version of rancher-compose"
+    sys.exit(0)
+
+def printVersionInformationThenExit():
+    print "ganado-deploy version v%s" % __version__
+    call(["./rancher/rancher-compose", "-v"])
+    sys.exit(0)
 
 def checkArgumentStructure(arguments):
     args_init_index = 1;
@@ -64,6 +72,9 @@ def checkArgumentStructure(arguments):
 
 def doFlagsExist(arguments):
     return not arguments[1] == '--url'
+
+def isVersionCommandEntered(arguments):
+    return arguments[1] == '--version'
 
 def checkHelpFlag(flags):
     if 'h' in flags:
