@@ -24,7 +24,7 @@ def setRancherVars(RANCHER_URL, RANCHER_ACCESS_KEY, RANCHER_SECRET_KEY, PROJECT_
     RANCHER_URL = RANCHER_URL
     RANCHER_ACCESS_KEY = RANCHER_ACCESS_KEY
     RANCHER_SECRET_KEY = RANCHER_SECRET_KEY
-    base_command.extend(["./rancher/rancher-compose", "--url", RANCHER_URL, "--access-key", RANCHER_ACCESS_KEY, "--secret-key", RANCHER_SECRET_KEY, "-f", "./build/docker-compose.yml", "-p", PROJECT_NAME, "-r", "./build/rancher-compose.yml"])
+    base_command.extend(["rancher-compose", "--url", RANCHER_URL, "--access-key", RANCHER_ACCESS_KEY, "--secret-key", RANCHER_SECRET_KEY, "-f", "./build/docker-compose.yml", "-p", PROJECT_NAME, "-r", "./build/rancher-compose.yml"])
 
 def checkForExistingEnvironment(cattle_client, PROJECT_NAME):
     logger.debug("DEBUG: Searching Environments For PROJECT_NAME: %s", PROJECT_NAME)

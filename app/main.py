@@ -45,7 +45,6 @@ def main():
     # Importing Args Modules
     # -----------------------------------
     from src import arguments
-    # arguments = imp.load_source('arguments', './app/src/arguments.py')
 
     print "Starting Main Application 3"
 
@@ -124,10 +123,6 @@ def main():
     from src import yml_reader
     from src import compose_builder
     from src import rancher_compose
-    # yml_reader = imp.load_source('yml_reader', './app/src/yml_reader.py')
-    # compose_builder = imp.load_source('compose_builder', './app/src/compose_builder.py')
-    # rancher_compose = imp.load_source('rancher_compose', './app/src/rancher_compose.py')
-
 
     # ##################################
     # 2. Reading YAML Files Into Script

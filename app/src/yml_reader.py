@@ -11,6 +11,7 @@
 # This module handles reading all the yml configuration files in from the
 # file system.
 #
+import sys
 import yaml
 import logging
 
@@ -19,35 +20,42 @@ logger = logging.getLogger('Rancher Deployment')
 def readRancherComposeTemplate():
     logger.debug("DEBUG: Attempting To Load Rancher Compose Template")
     # Load in out base rancher template
-    with open("templates/rancher-compose-template.yml", 'r') as stream:
-        try:
-            logger.debug("DEBUG: Rancher Compose Template Successfully Loaded")
-            return yaml.load(stream)
-        except yaml.YAMLError as exc:
-            logger.error("ERROR: Failed To Load Rancher Compose Template")
-            print(exc)
+    try:
+        stream = open("templates/rancher-compose-template.yml", 'r')
+        logger.debug("DEBUG: Rancher Compose Template Successfully Loaded")
+        return yaml.load(stream)
+    except IOError as exc:
+        logger.error("\nERROR: Failed To Load Rancher Compose Template")
+        logger.error("ERROR: Template Required Directory: templates/rancher-compose-template.yml")
+        print(exc)
+        sys.exit(1)
+
 
 def readDockerComposeTemplate():
     logger.debug("DEBUG: Attempting to Load Docker Compose Template")
     # Load in out base rancher template
-    with open("templates/docker-compose-template.yml", 'r') as stream:
-        try:
-            logger.debug("DEBUG: Docker Compose Template Successfully Loaded")
-            return yaml.load(stream)
-        except yaml.YAMLError as exc:
-            logger.error("ERROR: Failed To Load Docker Compose Template")
-            print(exc)
+    try:
+        stream = open("templates/docker-compose-template.yml", 'r')
+        logger.debug("DEBUG: Docker Compose Template Successfully Loaded")
+        return yaml.load(stream)
+    except IOError as exc:
+        logger.error("\nERROR: Failed To Load Docker Compose Template")
+        logger.error("ERROR: Template Required Directory: templates/docker-compose-template.yml")
+        print(exc)
+        sys.exit(1)
 
 def readConfigurationFile():
     logger.debug("DEBUG: Attempting to Load Configuration File")
     # Load in our configuration file
-    with open("templates/config.yml", 'r') as stream:
-        try:
-            logger.debug("DEBUG: Configuration File Succesfully Loaded")
-            return yaml.load(stream)
-        except yaml.YAMLError as exc:
-            logger.error("ERROR: Failed To Load Configuration File")
-            print(exc)
+    try:
+        stream = open("templates/config.yml", 'r')
+        logger.debug("DEBUG: Configuration File Succesfully Loaded")
+        return yaml.load(stream)
+    except IOError as exc:
+        logger.error("\nERROR: Failed To Load Configuration File")
+        logger.error("ERROR: Configuration Required Directory: templates/config.yml")
+        print(exc)
+        sys.exit(1)
 
 def getGlobalConfig():
     logger.debug("DEBUG: Extracting Global Configuration")
