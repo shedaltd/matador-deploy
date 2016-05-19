@@ -6,17 +6,17 @@ from os.path import abspath, dirname, join
 from setuptools import Command, find_packages, setup
 from app import __version__
 
-# this_dir = abspath(dirname(__file__))
-# with open(join(this_dir, 'README.md'), encoding='utf-8') as file:
-#     long_description = file.read()
+this_dir = abspath(dirname(__file__))
+with open(join(this_dir, 'README.rtf'), encoding='utf-8') as file:
+    long_description = file.read()
 
 setup(
     name = 'matador-deploy',
     version = __version__,
     description = 'A Bullish Rancher Deployment CLI App',
-    # long_description = long_description,
-    url = 'https://github.com/seedtech/rancher-deploy',
-    download_url = 'https://github.com/seedtech/rancher-deploy/archive/0.1.tar.gz',
+    long_description = long_description,
+    url = 'https://github.com/seedtech/matador-deploy',
+    download_url = 'https://github.com/seedtech/matador-deploy/archive/0.1.tar.gz',
     author = 'Timon Sotiropoulos',
     author_email = 'timon@seeddigital.co',
     license = 'MIT',

@@ -24,7 +24,7 @@ def setRancherVars(RANCHER_URL, RANCHER_ACCESS_KEY, RANCHER_SECRET_KEY, PROJECT_
     RANCHER_URL = RANCHER_URL
     RANCHER_ACCESS_KEY = RANCHER_ACCESS_KEY
     RANCHER_SECRET_KEY = RANCHER_SECRET_KEY
-    base_command.extend(["rancher-composes", "--url", RANCHER_URL, "--access-key", RANCHER_ACCESS_KEY, "--secret-key", RANCHER_SECRET_KEY, "-f", "./build/docker-compose.yml", "-p", PROJECT_NAME, "-r", "./build/rancher-compose.yml"])
+    base_command.extend(["rancher-compose", "--url", RANCHER_URL, "--access-key", RANCHER_ACCESS_KEY, "--secret-key", RANCHER_SECRET_KEY, "-f", "./build/docker-compose.yml", "-p", PROJECT_NAME, "-r", "./build/rancher-compose.yml"])
 
 def checkForExistingEnvironment(cattle_client, PROJECT_NAME):
     logger.debug("DEBUG: Searching Environments For PROJECT_NAME: %s", PROJECT_NAME)
@@ -49,6 +49,6 @@ def pushToRancher():
     except OSError as e:
         logger.error("ERROR: Command rancher-compose could not be found.")
         logger.error("ERROR: Please ensure you have rancher-compose installed. This is a dependancy for matador-deploy")
-        logger.info("INFO: See the documentation at https://github.com/seedtech/rancher-deploy on how to install rancher-compose")
+        logger.info("INFO: See the documentation at https://github.com/seedtech/matador-deploy on how to install rancher-compose")
         logger.info("INFO: Alternatively, go directly to the rancher-compose repo at https://github.com/rancher/rancher-compose")
         sys.exit(1)
