@@ -7,7 +7,7 @@ from setuptools import Command, find_packages, setup
 from app import __version__
 
 this_dir = abspath(dirname(__file__))
-with open(join(this_dir, 'README.rtf'), encoding='utf-8') as file:
+with open(join(this_dir, 'README.rst'), encoding='utf-8') as file:
     long_description = file.read()
 
 setup(
@@ -16,7 +16,7 @@ setup(
     description = 'A Bullish Rancher Deployment CLI App',
     long_description = long_description,
     url = 'https://github.com/seedtech/matador-deploy',
-    download_url = 'https://github.com/seedtech/matador-deploy/archive/0.3.tar.gz',
+    download_url = 'https://github.com/seedtech/matador-deploy/archive/0.4.tar.gz',
     author = 'Timon Sotiropoulos',
     author_email = 'timon@seeddigital.co',
     license = 'MIT',
