@@ -61,13 +61,19 @@ def readConfigurationFile():
 def getGlobalConfig():
     logger.debug("DEBUG: Extracting Global Configuration")
     config_file = readConfigurationFile()
-    return config_file["global"]
+    if "global" in config_file:
+        return config_file["global"]
+    else:
+        return []
 
 def getEnvConfig(environment):
     logger.debug("DEBUG: Extracting Environment Configuration")
     logger.debug("DEBUG: Environment Extracting: %s", environment)
     config_file = readConfigurationFile()
-    return config_file[environment]
+    if environment in config_file:
+        return config_file[environment]
+    else:
+        return []
 
 def createBuildDirectory():
     logger.debug("DEBUG: Searching for build directory")

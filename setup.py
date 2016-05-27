@@ -16,7 +16,7 @@ setup(
     description = 'A Bullish Rancher Deployment CLI App',
     long_description = long_description,
     url = 'https://github.com/seedtech/matador-deploy',
-    download_url = 'https://github.com/seedtech/matador-deploy/archive/0.4.tar.gz',
+    download_url = 'https://github.com/seedtech/matador-deploy/archive/0.5.tar.gz',
     author = 'Timon Sotiropoulos',
     author_email = 'timon@seeddigital.co',
     license = 'MIT',

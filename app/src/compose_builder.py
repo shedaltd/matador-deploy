@@ -71,13 +71,21 @@ def addOptionToService(docker_config, service, option, config_options):
 
 def addConfigToDockerCompose(docker_config, add_config):
     logger.debug("DEBUG: Adding Config To Docker Compose File")
+    if not add_config:
+        logger.debug("DEBUG: Additional config contains no services stopping iteration")
+        return
+
     for service in add_config:
         logger.debug("DEBUG: Updaing Config In Service: %s", service)
         if safeServiceLoad(docker_config, service):
-            for option in add_config[service]:
-                if not optionExistsInService(docker_config[service], option):
-                    createOptionInService(docker_config, service, option, type(add_config[service][option]))
-                addOptionToService(docker_config, service, option, add_config[service][option])
+            if not add_config[service]:
+                logger.debug("DEBUG: Service additions are empty, stopping addition: %s", service)
+            else:
+                logger.debug("DEBUG: Attempting to add additional config from the service: %s", service)
+                for option in add_config[service]:
+                    if not optionExistsInService(docker_config[service], option):
+                        createOptionInService(docker_config, service, option, type(add_config[service][option]))
+                    addOptionToService(docker_config, service, option, add_config[service][option])
 
 
 def setImageForDockerConfig(docker_config, environment, image_base):
